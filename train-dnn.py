@@ -210,13 +210,13 @@ for limit in limits:
 
     })
 
-df_results.to_csv(
-    "results/threshold_analysis.csv",
-    index=False
-)
+# df_results.to_csv(
+#    "results/threshold_analysis.csv",
+#    index=False
+#)
 
-print(df_results)
+# print(df_results)
 
-model.save(
-    "results/dnn_model.keras"
-)
+#model.save(
+#    "results/dnn_model.keras"
+#)
