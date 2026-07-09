@@ -15,11 +15,11 @@ ela decide "guardo o conhecimento antigo ou atualizo?"
 
 # Fluxo
 
-![GRU Flow](results/fluxogru.png)
+![GRU Flow](../results/fluxogru.png)
 
 # Hidden State
 memória da rede
-![Hidden State Flow](results/hiddenstateflu.png) 
+![Hidden State Flow](../results/hiddenstateflu.png) 
 
 # Matemática
 para cada dia ele calcula: 
