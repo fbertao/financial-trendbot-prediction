@@ -11,7 +11,9 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
     confusion_matrix,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay,
+    brier_score_loss,
+    log_loss
 )
 from preprocessing.preprocess import prepare_data
 
@@ -34,6 +36,21 @@ predictions = model_RF.predict(X_test)
 # probabilities
 predictions_prob = model_RF.predict_proba(X_test)
 
+# probs up
+prob_up = predictions_prob[:,1]
+
+# brier score
+brier = brier_score_loss(
+    y_test,
+    prob_up
+)
+
+# log loss
+logloss= log_loss(
+    y_test,
+    predictions_prob
+)
+
 # metrics
 accuracy = accuracy_score(y_test, predictions)
 precision = precision_score(y_test, predictions)
@@ -46,6 +63,8 @@ print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1-score : {f1:.4f}")
 print(f"AUC      : {auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Log Loss   : {logloss:.4f}")
 
 print("\nClassification Report:\n")
 
@@ -99,6 +118,7 @@ plt.plot(
 plt.xlabel("false positive rate")
 plt.ylabel("true positive rate")
 plt.title("Random Forest - ROC curve")
+plt.grid()
 plt.legend()
 
 # plt.savefig(
@@ -233,3 +253,13 @@ plt.title("Random Forest - Operations")
 # )
 
 plt.show()
+
+np.save(
+    "results/probabilities/random_forest_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/random_forest_y.npy",
+    y_test
+)

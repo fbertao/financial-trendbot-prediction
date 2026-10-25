@@ -7,7 +7,9 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
     f1_score,
-    roc_auc_score
+    roc_auc_score,
+    brier_score_loss,
+    log_loss
 )
 from preprocessing.preprocess import prepare_data
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -33,6 +35,21 @@ prediction = model.predict(X_test)
 # probabilities (for roc-auc)
 prediction_prob = model.predict_proba(X_test)
 
+# probs up
+prob_up = prediction_prob[:,1]
+
+# brier score
+brier = brier_score_loss(
+    y_test,
+    prob_up
+)
+
+# log loss
+logloss = log_loss(
+    y_test,
+    prediction_prob
+)
+
 # metrics
 
 accuracy = accuracy_score(y_test, prediction)
@@ -41,11 +58,14 @@ recall = recall_score(y_test, prediction)
 f1 = f1_score(y_test, prediction)
 auc = roc_auc_score(y_test, prediction_prob[:,1])
 
+
 print(f"Accuracy: {accuracy:.4f}")
 print(f"Precision: {precision:.4f}")
 print(f"Recall: {recall:.4f}")
 print(f"F1-score: {f1:.4f}")
 print(f"AUC: {auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Log Loss   : {logloss:.4f}")
 
 print("\nClassification Report:\n")
 
@@ -101,6 +121,7 @@ plt.plot(
 plt.xlabel("false positive rate")
 plt.ylabel("true positive rate")
 plt.title("roc curve - logistic regression")
+plt.grid()
 plt.legend()
 
 # plot.savefig(
@@ -178,3 +199,13 @@ plt.grid()
 # )
 
 plt.show()
+
+np.save(
+    "results/probabilities/logistic_regression_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/logistic_regression_y.npy",
+    y_test
+)

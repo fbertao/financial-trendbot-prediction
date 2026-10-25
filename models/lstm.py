@@ -22,7 +22,9 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     ConfusionMatrixDisplay,
-    roc_curve
+    roc_curve,
+    brier_score_loss,
+    log_loss
 )
 from preprocessing.preprocess import prepare_data
 
@@ -65,6 +67,7 @@ model = Sequential([
 optimizer = tf.keras.optimizers.Adam(
     learning_rate=1e-4
 )
+
 
 model.compile(
     optimizer=optimizer,
@@ -129,6 +132,21 @@ predictions = np.argmax(
     axis=1
 )
 
+# probs up
+prob_up = prediction_prob[:,1]
+
+# brier score
+brier = brier_score_loss(
+    y_test,
+    prob_up
+)
+
+# log loss
+logloss = log_loss(
+    y_test,
+    prediction_prob
+)
+
 # metrics
 accuracy = accuracy_score(y_test,predictions)
 
@@ -154,6 +172,8 @@ print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1-score : {f1:.4f}")
 print(f"AUC      : {auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Log Loss   : {logloss:.4f}")
 
 print()
 
@@ -274,3 +294,12 @@ plt.title("Operations vs Threshold")
 plt.grid()
 plt.show()
 
+np.save(
+    "results/probabilities/lstm_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/lstm_y.npy",
+    y_test
+)

@@ -53,10 +53,6 @@ def prepare_data():
 
     y = encoder.fit_transform(y)
 
-    scaler = RobustScaler()
-
-    X = scaler.fit_transform(X)
-
     X_train, X_val, y_train, y_val = (
         train_test_split(
             X,
@@ -67,6 +63,11 @@ def prepare_data():
         )
     )
 
+    scaler = RobustScaler()
+
+    X_train = scaler.fit_transform(X_train)
+    X_val = scaler.transform(X_val)
+    
     return (
         X_train,
         X_val,

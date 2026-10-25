@@ -11,7 +11,9 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     ConfusionMatrixDisplay,
-    roc_curve
+    roc_curve,
+    brier_score_loss,
+    log_loss
 )
 import os 
 os.makedirs('results', exist_ok=True)
@@ -91,7 +93,20 @@ accuracy = np.mean(
     y_val == y_pred
 )   
 roc_auc = roc_auc_score(
-    y_val, y_pred_prob[:,1]
+    y_val,
+    y_pred_prob[:, 1]
+)
+
+# probabilistic metrics
+
+brier = brier_score_loss(
+    y_val,
+    y_pred_prob[:, 1]
+)
+
+logloss = log_loss(
+    y_val,
+    y_pred_prob
 )
 
 # table of metrics
@@ -103,17 +118,29 @@ metrics_df = pd.DataFrame(
             'Recall',
             'F1-Score',     
             'Accuracy',
-            'ROC AUC'
+            'ROC AUC',
+            'Brier score',
+            'Log loss'
         ],
         'Value': [
             precision,
             recall,
             f1,
             accuracy,
-            roc_auc
+            roc_auc,
+            brier, 
+            logloss
         ]
     }
 )   
+
+print(f"Precision  : {precision:.4f}")
+print(f"Recall     : {recall:.4f}")
+print(f"F1-Score   : {f1:.4f}")
+print(f"Accuracy   : {accuracy:.4f}")
+print(f"ROC-AUC    : {roc_auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Log Loss   : {logloss:.4f}")
 
 metrics_df.to_csv(
     "results/metrics.csv",
@@ -157,6 +184,7 @@ plt.plot([0, 1], [0, 1], 'k--', label='Random Classifier')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve')
+plt.grid()
 plt.legend()
 plt.show()
 
@@ -220,3 +248,15 @@ for limit in limits:
 #model.save(
 #    "results/dnn_model.keras"
 #)
+
+prob_up = y_pred_prob[:, 1]
+
+np.save(
+    "results/probabilities/dnn_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/dnn_y.npy",
+    y_val
+)

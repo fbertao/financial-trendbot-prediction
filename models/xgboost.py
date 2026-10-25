@@ -11,7 +11,9 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
     confusion_matrix,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay,
+    brier_score_loss,
+    log_loss
 )
 from preprocessing.preprocess import prepare_data
 
@@ -35,6 +37,21 @@ model.fit(X_train, y_train)
 predictions = model.predict(X_test)
 
 prediction_prob = model.predict_proba(X_test)
+
+# prebs up
+prob_up = prediction_prob[:,1]
+
+# brier score
+brier = brier_score_loss(
+    y_test,
+    prob_up
+)
+
+# log loss
+logloss = log_loss(
+    y_test, 
+    prediction_prob
+)
 
 # metrics
 accuracy = accuracy_score(y_test, predictions)
@@ -64,6 +81,8 @@ print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1-score : {f1:.4f}")
 print(f"AUC      : {auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Log Loss   : {logloss:.4f}")
 
 print("\nClassification Report:\n")
 
@@ -215,3 +234,13 @@ plt.title("Operations vs Threshold")
 plt.grid()
 
 plt.show()
+
+np.save(
+    "results/probabilities/xgboost_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/xgboost_y.npy",
+    y_test
+)

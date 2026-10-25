@@ -28,8 +28,8 @@ ax = df.plot(
     figsize=(8,5)
 )
 
-plt.title("DNN vs LR vs RF vs XGBoost vs GRU vs LSTM")
-plt.ylabel("Score")
+plt.title("Classification and Discrimination Performance")
+plt.ylabel("Value")
 plt.ylim(0, 1)
 plt.xticks(rotation=0)
 plt.legend()

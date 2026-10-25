@@ -22,7 +22,9 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
     confusion_matrix,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay,
+    brier_score_loss,
+    log_loss
 )
 from preprocessing.preprocess import prepare_data
 
@@ -130,6 +132,22 @@ plt.show()
 prediction_prob = model.predict(X_test)
 predictions = np.argmax(prediction_prob, axis=1)
 
+# probs up
+prob_up = prediction_prob[:,1]
+
+# brier score
+brier = brier_score_loss(
+    y_test,
+    prob_up
+)
+
+# log loss
+
+logloss = log_loss(
+    y_test,
+    prediction_prob
+)
+
 # metrics
 accuracy = accuracy_score(y_test, predictions)
 precision = precision_score(
@@ -154,6 +172,8 @@ print(f"Precision: {precision:.4f}")
 print(f"Recall   : {recall:.4f}")
 print(f"F1-score : {f1:.4f}")
 print(f"AUC      : {auc:.4f}")
+print(f"brier score: {brier: .4f}")
+print(f"Log Loss: {logloss: .4f}")
 
 print("\nClassification Report:\n")
 print(
@@ -200,8 +220,9 @@ plt.plot(
 plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
 plt.title("ROC Curve")
-plt.legend()
 plt.grid()
+plt.legend()
+
 
 plt.show()
 
@@ -292,3 +313,12 @@ plt.grid()
 
 plt.show()
 
+np.save(
+    "results/probabilities/gru_prob.npy",
+    prob_up
+)
+
+np.save(
+    "results/probabilities/gru_y.npy",
+    y_test
+)
